@@ -1,0 +1,344 @@
+/* 上传区域 */
+.simple-image-hosting-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.simple-image-hosting-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.simple-image-hosting-drop-area {
+    margin-top: 20px;
+    padding: 30px;
+    border: 2px dashed #0073aa;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
+}
+
+.simple-image-hosting-drop-area:hover {
+    background-color: #e6f7ff;
+}
+
+.simple-image-hosting-preview-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column; /* 图片从上到下排列 */
+    align-items: center;
+    gap: 20px;
+}
+
+.simple-image-hosting-image-item {
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+}
+
+.simple-image-hosting-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+/* 图片直连输入框 */
+.simple-image-hosting-image-url {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 超长链接显示省略号 */
+}
+
+.simple-image-hosting-image-url:focus {
+    border-color: #0073aa;
+    outline: none;
+}
+
+/* 图片直连复制按钮 */
+.simple-image-hosting-copy-btn {
+    background-color: #0073aa;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.simple-image-hosting-copy-btn:hover {
+    background-color: #005a8b;
+}
+
+/* 复制全部图片直连按钮 */
+.simple-image-hosting-copy-all-btn {
+    margin-top: 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.simple-image-hosting-copy-all-btn:hover {
+    background-color: #218838;
+}
+
+.simple-image-hosting-upload-form input[type="file"] {
+    display: none;
+}
+
+.simple-image-hosting-upload-form label {
+    display: inline-block;
+    background-color: #0073aa;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.simple-image-hosting-upload-form label:hover {
+    background-color: #005a8b;
+}
+
+/* markdown输入框 */
+.simple-image-markdown-url {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 超长链接显示省略号 */
+}
+
+/* bbcode输入框 */
+.simple-image-bbcode-url {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 超长链接显示省略号 */
+}
+
+/* Markdown标题 */
+.simple-image-hosting-markdown-label {
+    padding-top: 5px;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 5px !important;
+}
+
+/* BBCode标题 */
+.simple-image-hosting-bbcode-label {
+    padding-top: 5px;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 5px !important;
+}
+
+
+/* 消息区域样式 */
+#upload-message {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.upload-message-info {
+    background-color: #e9f7ff;
+    color: #0073aa;
+    border: 1px solid #0073aa;
+}
+
+.upload-message-success {
+    background-color: #d4edda;
+    color: #28a745;
+    border: 1px solid #28a745;
+}
+
+.upload-message-error {
+    background-color: #f8d7da;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+
+/* 图片管理页面样式 */
+.manage-page-simple-image-hosting-manage-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.manage-page-simple-image-hosting-manage-container h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.manage-page-simple-image-hosting-preview-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 每行五张图片 */
+    gap: 20px; /* 图片间距 */
+    justify-items: center;
+    margin-top: 20px;
+}
+
+.manage-page-simple-image-hosting-image-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.manage-page-simple-image-hosting-image-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.manage-page-simple-image-hosting-image-preview {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px; /* 图片与按钮的间隔 */
+}
+
+.manage-page-simple-image-hosting-copy-btn {
+    background-color: #0073aa;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.manage-page-simple-image-hosting-copy-btn:hover {
+    background-color: #005a8b;
+    transform: scale(1.05);
+}
+
+
+/* 图片管理页面复制按钮 */
+.simple-image-manage-btn {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 2px 10px;
+    text-decoration: none !important; /* 去掉下划线 */
+    border-radius: 5px;
+    font-size: 12px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.simple-image-manage-btn:hover {
+    background-color: #45a049;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+.simple-image-manage-btn:active {
+    background-color: #398e3e;
+    transform: translateY(0);
+}
+
+.upload-format-info {
+    font-size: 16px;
+    color: #ff3300;
+    margin-bottom: 15px;
+}
+
+/* 公告区域样式 */
+.simple-image-hosting-announcement {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.simple-image-hosting-announcement h3 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #444;
+}
+
+.simple-image-hosting-announcement p {
+    margin-bottom: 0;
+}
+
+
+/* 屏幕小于768px时每行只显示2张图片 */
+@media (max-width: 768px) {
+    .manage-page-simple-image-hosting-preview-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 屏幕小于480px时每行只显示1张图片 */
+@media (max-width: 480px) {
+    .manage-page-simple-image-hosting-preview-container {
+        grid-template-columns: 1fr;
+    }
+}
