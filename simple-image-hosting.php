@@ -14,6 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// 插件列表页面添加设置链接
+function simple_image_hosting_settings_link($links) {
+    $settings_link = '<a href="admin.php?page=simple-image-hosting">设置</a>';
+    array_unshift($links, $settings_link);
+    return $links;
+}
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_image_hosting_settings_link');
+
 //1. 创建页面
 function simple_image_hosting_menu() {
     add_menu_page(
