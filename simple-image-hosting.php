@@ -3,7 +3,7 @@
  * Plugin Name: 小半WP图床
  * Plugin URI: https://www.jingxialai.com/4933.html
  * Description: 一个非常简单基于WordPress的图床插件，支持前台图片上传及快捷复制链接功能。
- * Version: 1.2
+ * Version: 1.3
  * Author: Summer
  * License: GPL License
  * Author URI: https://www.jingxialai.com/
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// 插件列表页面添加设置链接
+//1. 插件列表页面添加设置链接
 function simple_image_hosting_settings_link($links) {
     $settings_link = '<a href="admin.php?page=simple-image-hosting">设置</a>';
     array_unshift($links, $settings_link);
@@ -22,7 +22,7 @@ function simple_image_hosting_settings_link($links) {
 }
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'simple_image_hosting_settings_link');
 
-//1. 创建页面
+//2. 创建菜单
 function simple_image_hosting_menu() {
     add_menu_page(
         '小半WP图床设置页面',
@@ -45,7 +45,33 @@ function simple_image_hosting_menu() {
 }
 add_action( 'admin_menu', 'simple_image_hosting_menu' );
 
-//2. 设置页面内容
+//3. 激活时创建页面
+function simple_image_hosting_activate() {
+    // 检查是否已存在图片上传页面
+    if ( null === get_page_by_title( '图片上传' ) ) {
+        $upload_page = array(
+            'post_title'   => '图片上传',
+            'post_content' => '[image_upload_form]',
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        );
+        wp_insert_post( $upload_page );
+    }
+
+    // 检查是否已存在图片管理页面
+    if ( null === get_page_by_title( '图片管理' ) ) {
+        $manage_page = array(
+            'post_title'   => '图片管理',
+            'post_content' => '[image_manage_page]',
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        );
+        wp_insert_post( $manage_page );
+    }
+}
+register_activation_hook( __FILE__, 'simple_image_hosting_activate' );
+
+//4. 设置页面内容
 function simple_image_hosting_settings_page() {
     ?>
     <div class="wrap">
@@ -68,6 +94,13 @@ function simple_image_hosting_settings_page() {
                 <tr valign="top">
                     <th scope="row">关闭游客上传权限</th>
                     <td><input type="checkbox" name="simple_image_hosting_disable_guests" value="1" <?php checked( 1, get_option( 'simple_image_hosting_disable_guests' ), true ); ?> /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">游客上传文件夹名称</th>
+                    <td><input type="text" name="simple_image_hosting_guest_folder" value="<?php echo esc_attr(get_option('simple_image_hosting_guest_folder', 'guest_uploads')); ?>" />
+                        <p class="description">设置游客上传文件夹的名称，默认为"guest_uploads"。</p>
+                    </td>
                 </tr>
 
                 <tr valign="top">
@@ -132,6 +165,8 @@ function simple_image_hosting_settings_page() {
             <?php submit_button(); ?>
         </form>
     </div>
+    <p class="description">游客上传的图片也在/wp-content/uploads里面，只不过是单独的。<br>
+    如果你用的远程对象存储，也是单独新建一个文件夹；用对象存储开启内容审核，可以实现鉴黄等管理。</p>
 
     <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -146,10 +181,12 @@ function simple_image_hosting_settings_page() {
     <?php
 }
 
-//3. 注册设置
+//5. 注册设置
 function simple_image_hosting_register_settings() {
     register_setting( 'simple_image_hosting_options_group', 'simple_image_hosting_disable_guests' );
     //关闭游客上传
+    register_setting('simple_image_hosting_options_group', 'simple_image_hosting_guest_folder');
+    //游客文件夹
     register_setting( 'simple_image_hosting_options_group', 'simple_image_hosting_allowed_formats' );
     //文件格式
     register_setting( 'simple_image_hosting_options_group', 'simple_image_hosting_max_file_size' );
@@ -165,7 +202,7 @@ function simple_image_hosting_register_settings() {
 }
 add_action( 'admin_init', 'simple_image_hosting_register_settings' );
 
-//4. 用户角色函数
+//6. 用户角色函数
 function simple_image_hosting_sanitize_roles($roles) {
     if (is_array($roles)) {
         return implode(',', $roles); // 将数组转换为逗号分隔的字符串
@@ -173,34 +210,21 @@ function simple_image_hosting_sanitize_roles($roles) {
     return ''; // 如果没有角色选中，返回空字符串
 }
 
-//5. 插件激活时创建页面
-function simple_image_hosting_activate() {
-    // 检查是否已存在图片上传页面
-    if ( null === get_page_by_title( '图片上传' ) ) {
-        $upload_page = array(
-            'post_title'   => '图片上传',
-            'post_content' => '[image_upload_form]',
-            'post_status'  => 'publish',
-            'post_type'    => 'page',
-        );
-        wp_insert_post( $upload_page );
-    }
+//7. 插件设置保存时创建游客文件夹
+function simple_image_hosting_save_settings() {
+    $guest_folder = get_option('simple_image_hosting_guest_folder', 'guest_uploads');
+    $upload_dir = wp_upload_dir(); // 获取WordPress上传目录
+    $target_dir = $upload_dir['basedir'] . '/' . $guest_folder;
 
-    // 检查是否已存在图片管理页面
-    if ( null === get_page_by_title( '图片管理' ) ) {
-        $manage_page = array(
-            'post_title'   => '图片管理',
-            'post_content' => '[image_manage_page]',
-            'post_status'  => 'publish',
-            'post_type'    => 'page',
-        );
-        wp_insert_post( $manage_page );
+    // 如果文件夹不存在，则创建
+    if (!file_exists($target_dir)) {
+        wp_mkdir_p($target_dir); // 创建文件夹
     }
 }
-register_activation_hook( __FILE__, 'simple_image_hosting_activate' );
+add_action('update_option_simple_image_hosting_guest_folder', 'simple_image_hosting_save_settings');
 
 
-//6. 注册前端页面
+//8. 注册前端页面
 function simple_image_hosting_page() {
     ob_start();
 
@@ -275,7 +299,7 @@ function simple_image_hosting_page() {
 add_shortcode( 'image_upload_form', 'simple_image_hosting_page' );
 
 
-//7. 添加插件的样式和脚本
+//9. 添加插件的样式和脚本
 function simple_image_hosting_assets() {
     // 检查当前页面是否包含image_upload_form短代码或者image_manage_page短代码
     if (is_page() && (has_shortcode(get_post()->post_content, 'image_upload_form') || has_shortcode(get_post()->post_content, 'image_manage_page'))) {
@@ -288,7 +312,7 @@ function simple_image_hosting_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'simple_image_hosting_assets' );
 
-//8. nonce权限验证
+//10. nonce权限验证
 function simple_image_hosting_localize_script() {
     // 获取最大文件大小（以字节为单位）
     $max_file_size = get_option('simple_image_hosting_max_file_size', 2) * 1024 * 1024;
@@ -298,6 +322,8 @@ function simple_image_hosting_localize_script() {
     // 获取允许的文件格式
     $allowed_formats = get_option('simple_image_hosting_allowed_formats', 'jpg,jpeg,png');
     $allowed_formats_array = array_map('trim', explode(',', $allowed_formats)); // 转换为数组
+    // 获取游客上传文件夹
+    //$guest_folder = get_option('simple_image_hosting_guest_folder', 'guest_uploads');
 
     // nonce只有在需要时加载
     if (is_page() && (has_shortcode(get_post()->post_content, 'image_upload_form') || has_shortcode(get_post()->post_content, 'image_manage_page'))) {
@@ -312,7 +338,23 @@ function simple_image_hosting_localize_script() {
 }
 add_action( 'wp_enqueue_scripts', 'simple_image_hosting_localize_script' );
 
-//9. 图片上传
+//11. 修改上传目录过滤器
+function custom_upload_dir( $dirs ) {
+    // 获取游客上传文件夹
+    $guest_folder = get_option('simple_image_hosting_guest_folder', 'guest_uploads');
+    
+    // 判断是否为游客上传，若是游客上传，则改变上传路径
+    if ( ! is_user_logged_in() ) {
+        // 修改目录路径
+        $dirs['path'] = $dirs['basedir'] . '/' . $guest_folder;
+        $dirs['url'] = $dirs['baseurl'] . '/' . $guest_folder;
+    }
+    
+    return $dirs;
+}
+add_filter('upload_dir', 'custom_upload_dir');
+
+//12. 图片上传
 function handle_image_upload() {
     // 获取后台设置（默认设置）
     $allowed_formats = get_option( 'simple_image_hosting_allowed_formats', 'jpg,jpeg,png' );
@@ -369,6 +411,7 @@ function handle_image_upload() {
         wp_send_json_error( array( 'message' => '没有选择文件' ) );
     }
 
+    // 上传文件
     $files = $_FILES['files'];
     $uploaded_files = [];
 
@@ -381,7 +424,8 @@ function handle_image_upload() {
             'size'     => $files['size'][$key],
         ];
 
-        $upload = wp_handle_upload( $file, array( 'test_form' => false ) );
+        // 使用wp_handle_upload函数上传文件
+        $upload = wp_handle_upload($file, array('test_form' => false));
 
         if ( isset( $upload['error'] ) ) {
             wp_send_json_error( array( 'message' => $upload['error'] ) );
@@ -424,7 +468,7 @@ add_action( 'wp_ajax_handle_image_upload', 'handle_image_upload' );
 add_action( 'wp_ajax_nopriv_handle_image_upload', 'handle_image_upload' );
 
 
-//10. 前台图片管理页面
+//13. 前台图片管理页面
 function simple_image_hosting_manage_page() {
     // 只有登录用户才能访问
     if ( ! is_user_logged_in() ) {
@@ -471,7 +515,7 @@ function simple_image_hosting_manage_page() {
 add_shortcode( 'image_manage_page', 'simple_image_hosting_manage_page' );
 
 
-//11. 获取图片管理页面的链接
+//14. 获取图片管理页面的链接
 function get_image_manage_page_url() {
     // 获取所有已发布的页面
     $pages = get_pages([
@@ -491,7 +535,7 @@ function get_image_manage_page_url() {
 }
 
 
-//12. 后台查询页面
+//15. 后台查询页面
 function simple_image_hosting_user_images_page() {
     // 管理员才可以访问此页面
     if (!current_user_can('manage_options')) {
@@ -668,7 +712,7 @@ function simple_image_hosting_user_images_page() {
     <?php
 }
 
-//13. 单个图片删除
+//16. 单个图片删除
 function simple_image_hosting_delete_user_image_ajax() {
     if (isset($_POST['image_id'])) {
         // 验证删除图片权限
@@ -689,7 +733,7 @@ function simple_image_hosting_delete_user_image_ajax() {
 }
 add_action('wp_ajax_delete_user_image', 'simple_image_hosting_delete_user_image_ajax');
 
-//14. 删除该用户所有图片
+//17. 删除该用户所有图片
 function simple_image_hosting_delete_all_user_images() {
     if (isset($_POST['action']) && $_POST['action'] == 'delete_all_user_images' && isset($_POST['user_id'])) {
         // 验证删除图片权限
@@ -719,7 +763,7 @@ function simple_image_hosting_delete_all_user_images() {
 }
 add_action('wp_ajax_delete_all_user_images', 'simple_image_hosting_delete_all_user_images');
 
-//15. 查询用户列表分页样式
+//18. 查询用户列表分页样式
 function add_pagination_styles() {
     echo '
     <style>
