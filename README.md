@@ -18,4 +18,3 @@
 可以设置游客上传的文件夹
 
 
-社区反馈：https://iticu.icu/forum
